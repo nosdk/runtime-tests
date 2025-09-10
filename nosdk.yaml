@@ -1,0 +1,3 @@
+processes:
+  - name: test-db
+    command: pytest test_db.py
