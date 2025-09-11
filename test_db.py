@@ -77,3 +77,19 @@ def test_boolean_query(table):
     res = get(f"{table}?valid=true").json()
     assert len(res) == 1
     assert res[0]["valid"]
+
+
+def test_update_record(table):
+    item = {
+        "id": str(uuid4()),
+        "name": "tim",
+    }
+
+    post(table, json=item)
+    item["name"] = "jim"
+    post(table, json=item)
+
+    res = get(table).json()
+
+    assert len(res) == 1
+    assert res[0]["name"] == "jim"
