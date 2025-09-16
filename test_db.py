@@ -1,4 +1,4 @@
-from requests import get, post
+from requests import get, post, put
 from uuid import uuid4
 
 
@@ -87,9 +87,29 @@ def test_update_record(table):
 
     post(table, json=item)
     item["name"] = "jim"
-    post(table, json=item)
+    put(table, json=item)
 
     res = get(table).json()
 
+    assert len(res) == 1
+    assert res[0]["name"] == "jim"
+
+
+def test_update_no_id(table):
+    item = {
+        "name": "tim",
+    }
+
+    post(table, json=item)
+
+    res = get(table).json()
+    assert len(res) == 1
+    assert "id" in res[0]
+
+    res[0]["name"] = "jim"
+    put(table, json=res[0])
+    print("posted", res[0])
+
+    res = get(table).json()
     assert len(res) == 1
     assert res[0]["name"] == "jim"
