@@ -1,4 +1,4 @@
-from requests import get, post, put
+from requests import get, post, put, delete
 from uuid import uuid4
 
 
@@ -113,3 +113,55 @@ def test_update_no_id(table):
     res = get(table).json()
     assert len(res) == 1
     assert res[0]["name"] == "jim"
+
+
+def test_get_by_id(table):
+    item = {
+        "id": str(uuid4()),
+        "name": "tim",
+    }
+
+    post(table, json=item)
+
+    res = get(f"{table}/{item['id']}").json()
+    assert res["id"] == item["id"]
+
+
+def test_delete_by_id(table):
+    item = {
+        "id": str(uuid4()),
+        "name": "tim",
+    }
+
+    item2 = {
+        "id": str(uuid4()),
+        "name": "jim",
+    }
+
+    post(table, json=[item, item2])
+    assert len(get(table).json()) == 2
+
+    resp = delete(f"{table}/{item['id']}")
+    assert resp.status_code == 200
+
+    res = get(table).json()
+    assert len(res) == 1
+    assert res[0]["name"] == "jim"
+
+
+def test_delete_by_query(table):
+    items = [
+        {"name": "tim", "age": 35},
+        {"name": "jim", "age": 61},
+        {"name": "george", "age": 71},
+    ]
+
+    post(table, json=items)
+    assert len(get(table).json()) == 3
+
+    resp = delete(f"{table}?age>60")
+    assert resp.status_code == 200
+
+    res = get(table).json()
+    assert len(res) == 1
+    assert res[0]["name"] == "tim"
