@@ -1,3 +1,10 @@
 processes:
   - name: test-db
     command: pytest
+
+    consume:
+      - topic: nosdk-test
+      - topic: nothing
+
+    produce:
+      - topic: nosdk-test

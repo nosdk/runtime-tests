@@ -14,4 +14,4 @@ def random_suffix(s: str) -> str:
 @pytest.fixture(scope="function")
 def table(request):
     table_name = random_suffix(request.node.name)
-    return f"{NOSDK}/db/tables/{table_name}"
+    return f"{NOSDK}/db/{table_name}"
